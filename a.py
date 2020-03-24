@@ -14,7 +14,7 @@ def get_stock_data(start,end,loc):
 	return df1.dropna()
 
 def ploting(df,t):
-    #df = df/df.iloc[0,:]
+    
     ax=df.plot(title=t)
     ax.set_xlabel('Date')
     ax.set_ylabel('Price')
@@ -32,9 +32,11 @@ def plot_rolling_mean(df,sym):
 
 def daily_return(df):
     df=((df.shift(1)/df)-1)*100
+   
     return df
 def cumulative_return(df):
-    df=((df/df.iloc[0,:])-1)*100
+    df=((df/df.iloc[0])-1)*100
+    
     return df
 
     
@@ -51,18 +53,19 @@ def global_stats(df):
    
 
 ticker = ['AAPL','MSFT','CSCO','GOOGL']
-start='2010-01-22'
+start='2010-01-25'
 end='2010-05-22'  
     
 a = get_stock_data(start,end,ticker)
-ploting(a,'Stock Close Data')
-global_stats(a)
 
+def whole(df,l):
+    for com in l:
+        
+        x=df[com]
+        ploting(x,f"Stock price {com}")
+        ploting( daily_return(x),f"Daily Return {com}")
+        ploting(cumulative_return(x),f"Cumulative Return {com}")
+        
 
-plot_rolling_mean(a,ticker[1])
+whole(a,ticker)
 
-b=daily_return(a)
-ploting(b,"Daily Return in percentage")
-
-c=cumulative_return(a)
-ploting(c,"Cumulative Return in percentage")
