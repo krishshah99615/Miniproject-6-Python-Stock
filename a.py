@@ -1,7 +1,7 @@
 import pandas as pd 
 from pandas_datareader import data 
 import matplotlib.pyplot as plt 
-
+import numpy as np
 #Download all the stock data
 def stock_data(start,end,loc): 
 
@@ -49,6 +49,27 @@ def bolingerBand(df):
     
     return upper_rolling,lower_rolling
 
+def alfaBeta(df,l,market):
+    #df is whole stock data, l is list of company to find alfa beta value wrt to market
+    for com in l:
+        
+        #calulate daily return
+        x = dailyReturn(df[market]).dropna()
+        y = dailyReturn(df[com]).dropna()
+        
+        #Calculate beta alfa values
+        beta,alfa=np.polyfit(x,y,1)
+        
+        #Plot the values and line
+        dailyReturn(df).plot(kind='scatter',x=market,y=com)
+        plt.plot(x,beta*x+alfa,color='r')
+        print(f"Alfa Value for {com} is {alfa}  wrt to {market}")
+        print(f"Beta Value for {com} is {alfa}  wrt to {market}")
+
+
+    
+    
+#Plotting all metrics
 def plotting_whole(df,l):
     for com in l:
         x= df[com]
@@ -101,16 +122,16 @@ def plotting_whole(df,l):
         
         plt.show()
         
-        plt.savefig(f'{com}.png')
+        
     
-ticker = ['CSCO','GOOGL']
+ticker = ['GOOGL','CSCO','MSFT','AAPL']
 
 start='2010-01-25'
 end='2010-12-25'  
     
 a = stock_data(start,end,ticker)
 
-plotting_whole(a,ticker)
-        
-       
-        
+plotting_whole(a,ticker) 
+
+  
+alfaBeta(a,ticker[1:],'GOOGL')
