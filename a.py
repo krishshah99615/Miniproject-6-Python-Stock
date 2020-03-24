@@ -19,6 +19,10 @@ def rolling_mean(df):
     
     com_rm=df.rolling(20).mean()
     return com_rm  
+def rolling_std(df):
+    
+    com_rstd=df.rolling(20).std()
+    return com_rstd 
 
 
 
@@ -52,45 +56,74 @@ def plotting_whole(df,l):
         x= df[com]
         
         fig,ax = plt.subplots(2,2)
+        
+        #Plot stock close price
         ax[0,0].plot(x.index,x.values)
         ax[0,0].set_xlabel("Date")
         ax[0,0].set_ylabel("Price")
         ax[0,0].set_title(f"Stock Price {com}")
+        
+        
+        
+        #Plot rolling mean
         ax[0,1].plot(rolling_mean(x).index,rolling_mean(x).values)
         ax[0,1].set_xlabel("Date")
         ax[0,1].set_ylabel("Price")
         ax[0,1].set_title(f"Rolling Mean {com}")
         
+        
+        #Plot daily return
         ax[1,0].plot(daily_return(x).index,daily_return(x).values)
         ax[1,0].set_xlabel("Date")
         ax[1,0].set_ylabel("Percentage")
         ax[1,0].set_title(f"Daily Return {com}")
+        
+        #Plot cumulative return
         ax[1,1].plot(cumulative_return(x).index,cumulative_return(x).values)
         ax[1,1].set_xlabel("Date")
         ax[1,1].set_ylabel("Percentage")
         ax[1,1].set_title(f"Cumulative Return {com}")
         plt.show()
-        bolinger_band(x,2)
+        
+        plt.savefig(f'{com}.png')
+    
+        #Plot Bolinger Bands
+        bolinger_band(x)
+        
+        #PLot daily return histogram
+        p = daily_return(x)
+        h=p.hist(bins=20)
+        h.axvline(p.mean(),color='w',linestyle='dashed',linewidth=2)
+        h.axvline(p.std(),color='r',linestyle='dashed',linewidth=2)
+        h.axvline(-p.std(),color='r',linestyle='dashed',linewidth=2)
+        plt.show()
         
 
         
-def bolinger_band(df , t):
-    threshold=t
+def bolinger_band(df):
+    
     x = df
-    rolling_x = rolling_mean(x)
-    upper_rolling=rolling_x[0:]+threshold
-    lower_rolling=rolling_x[0:]-threshold
+   
+    upper_rolling=rolling_mean(x)+(rolling_std(x)*2)
+    lower_rolling=rolling_mean(x)-(rolling_std(x)*2)
+    
     x.plot()
-    rolling_x.plot()
+    rolling_mean(x).plot()
     upper_rolling.plot()
     lower_rolling.plot()
     plt.show()
 
 
-ticker = ['AAPL','MSFT','CSCO','GOOGL']
+ticker = ['CSCO','GOOGL']
+
 start='2010-01-25'
 end='2010-12-25'  
     
 a = get_stock_data(start,end,ticker)
 
 plotting_whole(a,ticker)
+
+plt.scatter(daily_return(a['GOOGL']),daily_return(a['CSCO']))
+plt.show()
+
+
