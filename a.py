@@ -65,8 +65,28 @@ def alfaBeta(df,l,market):
         plt.plot(x,beta*x+alfa,color='r')
         print(f"Alfa Value for {com} is {alfa}  wrt to {market}")
         print(f"Beta Value for {com} is {alfa}  wrt to {market}")
+        
+    print("Correlation between each value and market is \n")
+    print(df.corr(method='pearson'))
 
 
+def portfolio(loc,start,end,alloc):
+    
+    
+    d = stock_data(start,end,loc) 
+    
+    norm_d=d/d.iloc[0]
+    alloc_d=norm_d.mul(alloc,axis='columns')
+    
+    alloc_d.iloc[1:]= alloc_d.iloc[1:]*alloc_d.iloc[0]
+    
+    pos_d=alloc_d
+    
+    port_val = pos_d.sum(axis=1)
+    
+    
+    
+    return port_val
     
     
 #Plotting all metrics
@@ -125,7 +145,7 @@ def plotting_whole(df,l):
         
     
 ticker = ['GOOGL','CSCO','MSFT','AAPL']
-
+alloc=[0.4,0.4,0.1,0.1]
 start='2010-01-25'
 end='2010-12-25'  
     
@@ -135,3 +155,7 @@ plotting_whole(a,ticker)
 
   
 alfaBeta(a,ticker[1:],'GOOGL')
+
+
+
+port_val = portfolio(ticker,start,end,alloc)
