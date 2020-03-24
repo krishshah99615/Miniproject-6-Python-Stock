@@ -13,20 +13,12 @@ def get_stock_data(start,end,loc):
 		df1.rename(columns={'Close':f'{sym}'},inplace=True)
 	return df1.dropna()
 
-def ploting(df,t):
+
     
-    ax=df.plot(title=t)
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Price')
-    plt.show()   
+def rolling_mean(df):
     
-def plot_rolling_mean(df,sym):
-    com=a[sym]
-    com_rm=com.rolling(20).mean()
-    ax =com.plot(title=f"{sym} Sock Price")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Price")
-    com_rm.plot()    
+    com_rm=df.rolling(20).mean()
+    return com_rm  
 
 
 
@@ -52,20 +44,53 @@ def global_stats(df):
     print("Standard dev of the stocks \n"+ str(standard_d))
    
 
+
+
+        
+def plotting_whole(df,l):
+    for com in l:
+        x= df[com]
+        
+        fig,ax = plt.subplots(2,2)
+        ax[0,0].plot(x.index,x.values)
+        ax[0,0].set_xlabel("Date")
+        ax[0,0].set_ylabel("Price")
+        ax[0,0].set_title(f"Stock Price {com}")
+        ax[0,1].plot(rolling_mean(x).index,rolling_mean(x).values)
+        ax[0,1].set_xlabel("Date")
+        ax[0,1].set_ylabel("Price")
+        ax[0,1].set_title(f"Rolling Mean {com}")
+        
+        ax[1,0].plot(daily_return(x).index,daily_return(x).values)
+        ax[1,0].set_xlabel("Date")
+        ax[1,0].set_ylabel("Percentage")
+        ax[1,0].set_title(f"Daily Return {com}")
+        ax[1,1].plot(cumulative_return(x).index,cumulative_return(x).values)
+        ax[1,1].set_xlabel("Date")
+        ax[1,1].set_ylabel("Percentage")
+        ax[1,1].set_title(f"Cumulative Return {com}")
+        plt.show()
+        bolinger_band(x,2)
+        
+
+        
+def bolinger_band(df , t):
+    threshold=t
+    x = df
+    rolling_x = rolling_mean(x)
+    upper_rolling=rolling_x[0:]+threshold
+    lower_rolling=rolling_x[0:]-threshold
+    x.plot()
+    rolling_x.plot()
+    upper_rolling.plot()
+    lower_rolling.plot()
+    plt.show()
+
+
 ticker = ['AAPL','MSFT','CSCO','GOOGL']
 start='2010-01-25'
-end='2010-05-22'  
+end='2010-12-25'  
     
 a = get_stock_data(start,end,ticker)
 
-def whole(df,l):
-    for com in l:
-        
-        x=df[com]
-        ploting(x,f"Stock price {com}")
-        ploting( daily_return(x),f"Daily Return {com}")
-        ploting(cumulative_return(x),f"Cumulative Return {com}")
-        
-
-whole(a,ticker)
-
+plotting_whole(a,ticker)
