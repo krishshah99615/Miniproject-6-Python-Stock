@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Optimization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+    </script>
+    <style>
+        div#content {
+            display: none;
+        }
+
+        div#loading {
+            top: 200 px;
+            margin: auto;
+            position: absolute;
+            z-index: 1000;
+            width: 160px;
+            height: 24px;
+            background: url('https://i.pinimg.com/originals/7f/98/f6/7f98f61022cea42bed21c545290ccba8.gif') no-repeat;
+            cursor: wait;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="content">
+        <div class="container">
+            {% block content %}
+            <div class="heading">
+                <h1 class="orange-text center-align">Portfolio Optimization</h1>
+                <h6 class="grey-text center-align">Choose the right allocations</h6>
+            </div>
+
+            <div class="input-form">
+                <form action="/" method="post">
+                    <h4 class="orange-black center-left">Enter Your Details</h4>
+                    <div class="row">
+                        <div class="input-field col s12 l3">
+                            <p class="range-field">
+
+                                <select name="c1n">
+                                    <option value="" disabled selected>Select Company</option>
+
+                                    {% for k,v in t.items() %}
+                                    <option value={{v}}>{{k}}</option>
+                                    {% endfor %}
+                                </select>
+                                <label>Company 1</label>
+                                <label for="one"> Select out of 10 [1 means 10% Share]</label>
+                                <input type="range" name="c1" id="one" min="0" max="10" />
+                            </p>
+                        </div>
+                        <div class="input-field col s12 l3">
+                            <p class="range-field">
+
+                                <select name="c2n">
+                                    <option value="" disabled selected>Select Company</option>
+                                    {% for k,v in t.items() %}
+                                    <option value={{v}}>{{k}}</option>
+                                    {% endfor %}
+                                </select>
+                                <label>Company 2</label>
+                                <label for="two"> Select out of 10 [1 means 10% Share]</label>
+                                <input type="range" name="c2" id="two" min="0" max="10" />
+                            </p>
+                        </div>
+                        <div class="input-field col s12 l3">
+                            <p class="range-field">
+
+                                <select name="c3n">
+                                    <option value="" disabled selected>Select Company</option>
+                                    {% for k,v in t.items() %}
+                                    <option value={{v}}>{{k}}</option>
+                                    {% endfor %}
+                                </select>
+                                <label>Company 3</label>
+                                <label for="three"> Select out of 10 [1 means 10% Share]</label>
+                                <input type="range" name="c3" id="three" min="0" max="10" />
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field  col s10">
+                            <p class="range-field">
+                                <label for="test4">Amount $ </label>
+                                <input type="range" name="amt" id="test4" min="0" max="100000" />
+
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row center-align">
+                        <input class="btn orange" type="submit" value="Optimise" onsubmit="preloader()">
+                    </div>
+                </form>
+                {% if err %}
+                <div class="container center-align">
+                    <h3 class="red-text">{{err}}</h3>
+
+                </div>
+
+                {% endif %}
+            </div>
+
+
+            {% endblock %}
+        </div>
+    </div>
+    <div id="loading">
+
+    </div>
+    <script type="text/javascript">// <![CDATA[
+        function preloader() {
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("content").style.display = "block";
+        }//preloader
+        window.onload = preloader;
+// ]]></script>
+</body>
+
+</html>
